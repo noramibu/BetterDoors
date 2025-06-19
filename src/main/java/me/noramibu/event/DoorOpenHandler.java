@@ -7,6 +7,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.block.enums.DoorHinge;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -35,10 +36,7 @@ public class DoorOpenHandler implements UseBlockCallback {
         boolean isWooden = isWooden(state);
 
         if (isDoor) {
-            // Handle wooden doors, which vanilla opens. We just add the double door part.
-            if (isWooden) {
-                handleDoubleDoor(player, world, pos, state);
-            }
+            handleDoubleDoor(player, world, pos, state);
         }
 
         return ActionResult.PASS;
@@ -46,9 +44,11 @@ public class DoorOpenHandler implements UseBlockCallback {
 
     private void handleDoubleDoor(PlayerEntity player, World world, BlockPos pos, BlockState state) {
         boolean isWooden = isWooden(state);
-        
+        boolean isCopper = isCopper(state);
+
         if (isWooden && !Config.allowDoubleWoodenDoors) return;
-        if (!isWooden && !Config.allowDoubleIronDoors) return;
+        if (isCopper && !Config.allowDoubleCopperDoors) return;
+        if (!isWooden && !isCopper && !Config.allowDoubleIronDoors) return;
 
         if (Config.requirePermissionForDoubleDoors && !Permissions.check(player, "betterdoors.doubledoors", false)) return;
 
@@ -58,13 +58,7 @@ public class DoorOpenHandler implements UseBlockCallback {
         BlockState otherState = world.getBlockState(otherPos);
         if (!otherState.isOf(state.getBlock())) return;
 
-        // If it's a wooden door, its state is pre-toggle. The other door must have the same open state to be toggled.
-        // If it's an iron door, its state is post-toggle. The other door must have the opposite open state to be toggled.
-        boolean shouldToggle = isWooden;
-        
-        if (shouldToggle) {
-            toggleDoor(world, otherState, otherPos);
-        }
+        toggleDoor(world, otherState, otherPos);
     }
 
     private BlockPos findSecondDoor(World world, BlockPos pos, BlockState state) {
@@ -94,8 +88,8 @@ public class DoorOpenHandler implements UseBlockCallback {
         world.setBlockState(pos, state, 10);
         world.emitGameEvent(null, state.get(DoorBlock.OPEN) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
         boolean isWooden = state.isIn(BlockTags.WOODEN_DOORS);
-        world.playSound(null, pos, 
-            isWooden ? 
+        world.playSound(null, pos,
+            isWooden ?
                 (state.get(DoorBlock.OPEN) ? SoundEvents.BLOCK_WOODEN_DOOR_OPEN : SoundEvents.BLOCK_WOODEN_DOOR_CLOSE) :
                 (state.get(DoorBlock.OPEN) ? SoundEvents.BLOCK_IRON_DOOR_OPEN : SoundEvents.BLOCK_IRON_DOOR_CLOSE),
             SoundCategory.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
@@ -118,5 +112,9 @@ public class DoorOpenHandler implements UseBlockCallback {
         if (block instanceof DoorBlock) return state.isIn(BlockTags.WOODEN_DOORS);
         if (block instanceof TrapdoorBlock) return state.isIn(BlockTags.WOODEN_TRAPDOORS);
         return false;
+    }
+
+    private boolean isCopper(BlockState state) {
+        return Registries.BLOCK.getId(state.getBlock()).getPath().contains("copper_door");
     }
 } 

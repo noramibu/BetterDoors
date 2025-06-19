@@ -36,13 +36,16 @@ public class KnockingHandler implements AttackBlockCallback {
         }
 
         boolean isWooden = state.isIn(BlockTags.WOODEN_DOORS) || state.isIn(BlockTags.WOODEN_TRAPDOORS);
+        boolean isCopper = isCopper(state);
 
         if (isDoor) {
             if (isWooden && !Config.allowKnockingWoodenDoors) return ActionResult.PASS;
-            if (!isWooden && !Config.allowKnockingIronDoors) return ActionResult.PASS;
+            if (isCopper && !Config.allowKnockingCopperDoors) return ActionResult.PASS;
+            if (!isWooden && !isCopper && !Config.allowKnockingIronDoors) return ActionResult.PASS;
         } else { // isTrapdoor
             if (isWooden && !Config.allowKnockingWoodenTrapdoors) return ActionResult.PASS;
-            if (!isWooden && !Config.allowKnockingIronTrapdoors) return ActionResult.PASS;
+            if (isCopper && !Config.allowKnockingCopperTrapdoors) return ActionResult.PASS;
+            if (!isWooden && !isCopper && !Config.allowKnockingIronTrapdoors) return ActionResult.PASS;
         }
 
         if (Config.knockingRequiresShift && !player.isSneaking()) {
@@ -53,7 +56,7 @@ public class KnockingHandler implements AttackBlockCallback {
             return ActionResult.PASS;
         }
 
-        SoundEvent knockSound = getSoundEvent(isWooden ? Config.soundKnockWood : Config.soundKnockIron);
+        SoundEvent knockSound = getSoundEvent(isWooden ? Config.soundKnockWood : (isCopper ? Config.soundKnockCopper : Config.soundKnockIron));
         if (knockSound == null) {
             return ActionResult.PASS;
         }
@@ -70,5 +73,9 @@ public class KnockingHandler implements AttackBlockCallback {
             return null;
         }
         return Registries.SOUND_EVENT.get(id);
+    }
+
+    private boolean isCopper(BlockState state) {
+        return Registries.BLOCK.getId(state.getBlock()).getPath().contains("copper_door") || Registries.BLOCK.getId(state.getBlock()).getPath().contains("copper_trapdoor");
     }
 } 

@@ -1,24 +1,23 @@
 # Whether a player needs to have an empty hand or sneak to knock on a door.
 knocking-requires-empty-hand = true
 knocking-requires-shift = false
+
 # Whether a player needs a permission to knock on a door. If true, players will need the 'betterdoors.knock' permission.
 require-permission-to-knock = false
 
-# Allow knocking on wooden doors.
 allow-knocking-wooden-doors = true
-# Allow knocking on iron doors.
 allow-knocking-iron-doors = true
-# Allow knocking on wooden trapdoors.
+allow-knocking-copper-doors = true
 allow-knocking-wooden-trapdoors = true
-# Allow knocking on iron trapdoors.
 allow-knocking-iron-trapdoors = true
+allow-knocking-copper-trapdoors = true
 
 
 # For sounds, check here @https://maven.fabricmc.net/docs/yarn-21w05b+build.8/net/minecraft/sound/SoundEvents.html
-# Sound event for knocking on iron doors. Must be a valid sound event ID.
+# Sound for knocking on doors. Must be a valid sound ID.
 sound-knock-iron = "minecraft:entity.zombie.attack_iron_door"
-# Sound event for knocking on wooden doors. Must be a valid sound event ID.
 sound-knock-wood = "minecraft:item.shield.block"
+sound-knock-copper = "minecraft:block.copper.step"
 # A volume of 1.0 means 16 blocks, 2.0 means 32 blocks, etc.
 sound-knock-volume = 1.0
 # The pitch of the knock sound.
@@ -26,7 +25,8 @@ sound-knock-pitch = 1.0
 
 # --- Double Door Settings ---
 allow-double-wooden-doors = true
-allow-double-iron-doors = false
+allow-double-iron-doors = true
+allow-double-copper-doors = true
 
 # Double doors will work with redstone, if double door feature is enabled.
 check-for-redstone = true

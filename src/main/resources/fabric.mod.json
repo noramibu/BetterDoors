@@ -3,16 +3,15 @@
 	"id": "better-doors",
 	"version": "${version}",
 	"name": "Better Doors",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Double doors, with knocking features. Supports redstone and highly customizable!",
 	"authors": [
-		"Me!"
+		"noramibu"
 	],
 	"contact": {
 		"discord": "bimunora",
 		"sources": "https://github.com/noramibu/BetterDoors"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/better-doors/icon.png",
 	"environment": "server",
 	"entrypoints": {
 		"main": [
