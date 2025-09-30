@@ -21,7 +21,7 @@ public class KnockingHandler implements AttackBlockCallback {
 
     @Override
     public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
-        if (world.isClient || (Config.knockingRequiresEmptyHand && !player.getStackInHand(hand).isEmpty())) {
+        if (world.isClient() || (Config.knockingRequiresEmptyHand && !player.getStackInHand(hand).isEmpty())) {
             return ActionResult.PASS;
         }
 

@@ -22,7 +22,7 @@ import net.minecraft.world.event.GameEvent;
 public class DoorOpenHandler implements UseBlockCallback {
     @Override
     public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        if (world.isClient) return ActionResult.PASS;
+        if (world.isClient()) return ActionResult.PASS;
 
         BlockPos pos = hitResult.getBlockPos();
         BlockState state = world.getBlockState(pos);
@@ -32,8 +32,6 @@ public class DoorOpenHandler implements UseBlockCallback {
         boolean isTrapdoor = block instanceof TrapdoorBlock;
 
         if (!isDoor && !isTrapdoor) return ActionResult.PASS;
-
-        boolean isWooden = isWooden(state);
 
         if (isDoor) {
             handleDoubleDoor(player, world, pos, state);

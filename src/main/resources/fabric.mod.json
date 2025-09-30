@@ -12,7 +12,6 @@
 		"sources": "https://github.com/noramibu/BetterDoors"
 	},
 	"license": "CC0-1.0",
-	"environment": "server",
 	"entrypoints": {
 		"main": [
 			"me.noramibu.BetterDoors"
@@ -27,8 +26,5 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-permissions-api-v0": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
