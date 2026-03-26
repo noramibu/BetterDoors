@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -12,7 +12,8 @@ base {
 
 repositories {
 	maven { url "https://maven.fabricmc.net/" }
-	maven { url "https://jitpack.io" }
+	mavenCentral()
+	maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
 }
 
 loom {
@@ -21,17 +22,15 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// TOML config
-	modImplementation include("com.moandjiezana.toml:toml4j:0.7.2")
+	include(implementation("com.moandjiezana.toml:toml4j:0.7.2"))
 
 	// Permissions API
-    include(modImplementation('me.lucko:fabric-permissions-api:0.4.0'))
-	
+	include(implementation("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"))
 }
 
 processResources {
@@ -43,14 +42,14 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

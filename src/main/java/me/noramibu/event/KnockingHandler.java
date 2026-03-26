@@ -4,66 +4,69 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import me.noramibu.BetterDoors;
 import me.noramibu.config.Config;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 public class KnockingHandler implements AttackBlockCallback {
 
     @Override
-    public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
-        if (world.isClient() || (Config.knockingRequiresEmptyHand && !player.getStackInHand(hand).isEmpty())) {
-            return ActionResult.PASS;
+    public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos pos, Direction direction) {
+        if (world.isClientSide() || (Config.knockingRequiresEmptyHand && !player.getItemInHand(hand).isEmpty())) {
+            return InteractionResult.PASS;
         }
 
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
         boolean isDoor = block instanceof DoorBlock;
-        boolean isTrapdoor = block instanceof TrapdoorBlock;
+        boolean isTrapdoor = block instanceof TrapDoorBlock;
 
         if (!isDoor && !isTrapdoor) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        boolean isWooden = state.isIn(BlockTags.WOODEN_DOORS) || state.isIn(BlockTags.WOODEN_TRAPDOORS);
+        boolean isWooden = state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS);
         boolean isCopper = isCopper(state);
 
         if (isDoor) {
-            if (isWooden && !Config.allowKnockingWoodenDoors) return ActionResult.PASS;
-            if (isCopper && !Config.allowKnockingCopperDoors) return ActionResult.PASS;
-            if (!isWooden && !isCopper && !Config.allowKnockingIronDoors) return ActionResult.PASS;
+            if (isWooden && !Config.allowKnockingWoodenDoors) return InteractionResult.PASS;
+            if (isCopper && !Config.allowKnockingCopperDoors) return InteractionResult.PASS;
+            if (!isWooden && !isCopper && !Config.allowKnockingIronDoors) return InteractionResult.PASS;
         } else { // isTrapdoor
-            if (isWooden && !Config.allowKnockingWoodenTrapdoors) return ActionResult.PASS;
-            if (isCopper && !Config.allowKnockingCopperTrapdoors) return ActionResult.PASS;
-            if (!isWooden && !isCopper && !Config.allowKnockingIronTrapdoors) return ActionResult.PASS;
+            if (isWooden && !Config.allowKnockingWoodenTrapdoors) return InteractionResult.PASS;
+            if (isCopper && !Config.allowKnockingCopperTrapdoors) return InteractionResult.PASS;
+            if (!isWooden && !isCopper && !Config.allowKnockingIronTrapdoors) return InteractionResult.PASS;
         }
 
-        if (Config.knockingRequiresShift && !player.isSneaking()) {
-            return ActionResult.PASS;
+        if (Config.knockingRequiresShift && !player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
         }
 
         if (Config.requirePermissionToKnock && !Permissions.check(player, "betterdoors.knock", false)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
         SoundEvent knockSound = getSoundEvent(isWooden ? Config.soundKnockWood : (isCopper ? Config.soundKnockCopper : Config.soundKnockIron));
         if (knockSound == null) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        world.playSound(null, pos, knockSound, net.minecraft.sound.SoundCategory.BLOCKS, (float) Config.soundKnockVolume, (float) Config.soundKnockPitch);
-        world.emitGameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
-        return ActionResult.PASS;
+        world.playSound(null, pos, knockSound, net.minecraft.sounds.SoundSource.BLOCKS, (float) Config.soundKnockVolume, (float) Config.soundKnockPitch);
+        world.gameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
+        return InteractionResult.PASS;
     }
 
     private SoundEvent getSoundEvent(String soundId) {
@@ -72,10 +75,10 @@ public class KnockingHandler implements AttackBlockCallback {
             BetterDoors.LOGGER.warn("Invalid sound event ID in config: {}", soundId);
             return null;
         }
-        return Registries.SOUND_EVENT.get(id);
+        return BuiltInRegistries.SOUND_EVENT.getValue(id);
     }
 
     private boolean isCopper(BlockState state) {
-        return Registries.BLOCK.getId(state.getBlock()).getPath().contains("copper_door") || Registries.BLOCK.getId(state.getBlock()).getPath().contains("copper_trapdoor");
+        return BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath().contains("copper_door") || BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath().contains("copper_trapdoor");
     }
 } 

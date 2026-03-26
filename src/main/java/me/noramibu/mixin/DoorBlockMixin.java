@@ -2,12 +2,12 @@ package me.noramibu.mixin;
 
 import me.noramibu.config.Config;
 import me.noramibu.event.DoorOpenHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.enums.DoorHinge;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(DoorBlock.class)
 public abstract class DoorBlockMixin {
 
-    @Redirect(method = "neighborUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"))
-    private boolean onNeighborUpdateSetBlockState(World world, BlockPos pos, BlockState newState, int flags) {
+    @Redirect(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+    private boolean onNeighborUpdateSetBlockState(Level world, BlockPos pos, BlockState newState, int flags) {
         BlockState oldState = world.getBlockState(pos);
-        boolean wasOpen = oldState.getBlock() instanceof DoorBlock && oldState.get(DoorBlock.OPEN);
-        boolean willBeOpen = newState.getBlock() instanceof DoorBlock && newState.get(DoorBlock.OPEN);
+        boolean wasOpen = oldState.getBlock() instanceof DoorBlock && oldState.getValue(DoorBlock.OPEN);
+        boolean willBeOpen = newState.getBlock() instanceof DoorBlock && newState.getValue(DoorBlock.OPEN);
 
-        boolean result = world.setBlockState(pos, newState, flags);
+        boolean result = world.setBlock(pos, newState, flags);
 
         if (result && wasOpen != willBeOpen && Config.checkForRedstone) {
-            boolean isWooden = newState.isIn(net.minecraft.registry.tag.BlockTags.WOODEN_DOORS);
+            boolean isWooden = newState.is(net.minecraft.tags.BlockTags.WOODEN_DOORS);
 
             if ((isWooden && Config.allowDoubleWoodenDoors) || (!isWooden && Config.allowDoubleIronDoors)) {
                  findAndToggleSecondDoor(world, pos, newState);
@@ -33,23 +33,23 @@ public abstract class DoorBlockMixin {
         return result;
     }
 
-    private void findAndToggleSecondDoor(World world, BlockPos pos, BlockState state) {
+    private void findAndToggleSecondDoor(Level world, BlockPos pos, BlockState state) {
         BlockPos otherPos = findSecondDoor(world, pos, state);
         if (otherPos != null) {
             BlockState otherState = world.getBlockState(otherPos);
-            if (otherState.getBlock() == state.getBlock() && otherState.get(DoorBlock.OPEN) != state.get(DoorBlock.OPEN)) {
+            if (otherState.getBlock() == state.getBlock() && otherState.getValue(DoorBlock.OPEN) != state.getValue(DoorBlock.OPEN)) {
                 DoorOpenHandler.toggleDoor(world, otherState, otherPos);
             }
         }
     }
 
-    private BlockPos findSecondDoor(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(DoorBlock.FACING);
-        DoorHinge hinge = state.get(DoorBlock.HINGE);
-        BlockPos secondDoorPos = pos.offset(hinge == DoorHinge.LEFT ? facing.rotateYClockwise() : facing.rotateYCounterclockwise());
+    private BlockPos findSecondDoor(Level world, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(DoorBlock.FACING);
+        DoorHingeSide hinge = state.getValue(DoorBlock.HINGE);
+        BlockPos secondDoorPos = pos.relative(hinge == DoorHingeSide.LEFT ? facing.getClockWise() : facing.getCounterClockWise());
         BlockState secondDoorState = world.getBlockState(secondDoorPos);
 
-        if (secondDoorState.getBlock() == state.getBlock() && secondDoorState.get(DoorBlock.HINGE) != hinge) {
+        if (secondDoorState.getBlock() == state.getBlock() && secondDoorState.getValue(DoorBlock.HINGE) != hinge) {
             return secondDoorPos;
         }
         return null;
