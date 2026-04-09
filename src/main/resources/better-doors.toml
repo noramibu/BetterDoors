@@ -6,11 +6,29 @@ knocking-requires-shift = false
 require-permission-to-knock = false
 
 allow-knocking-wooden-doors = true
+# Per wooden door type (effective only when allow-knocking-wooden-doors = true).
+allow-knocking-oak-doors = true
+allow-knocking-spruce-doors = true
+allow-knocking-birch-doors = true
+allow-knocking-jungle-doors = true
+allow-knocking-acacia-doors = true
+allow-knocking-dark-oak-doors = true
+allow-knocking-mangrove-doors = true
+allow-knocking-bamboo-doors = true
+allow-knocking-cherry-doors = true
+allow-knocking-crimson-doors = true
+allow-knocking-warped-doors = true
+allow-knocking-pale-oak-doors = true
 allow-knocking-iron-doors = true
 allow-knocking-copper-doors = true
 allow-knocking-wooden-trapdoors = true
 allow-knocking-iron-trapdoors = true
 allow-knocking-copper-trapdoors = true
+
+# Fence gate knocking support (all gate variants).
+allow-knocking-fence-gates = false
+# If true, players will need the 'betterdoors.knockgates' permission to knock on fence gates.
+require-permission-to-knock-fence-gates = false
 
 
 # For sounds, check here @https://maven.fabricmc.net/docs/yarn-21w05b+build.8/net/minecraft/sound/SoundEvents.html
@@ -27,10 +45,13 @@ sound-knock-pitch = 1.0
 allow-double-wooden-doors = true
 allow-double-iron-doors = true
 allow-double-copper-doors = true
+# Double fence gates (all gate variants).
+allow-double-fence-gates = false
 
 # Double doors will work with redstone, if double door feature is enabled.
 check-for-redstone = true
 
 # If true, players will need the 'betterdoors.doubledoors' permission to use double doors.
 require-permission-for-double-doors = false
-
+# If true, players will need the 'betterdoors.doublegates' permission to use double fence gates.
+require-permission-for-double-fence-gates = false

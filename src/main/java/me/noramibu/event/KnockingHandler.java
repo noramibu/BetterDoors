@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -33,33 +34,42 @@ public class KnockingHandler implements AttackBlockCallback {
 
         boolean isDoor = block instanceof DoorBlock;
         boolean isTrapdoor = block instanceof TrapDoorBlock;
+        boolean isGate = block instanceof FenceGateBlock;
 
-        if (!isDoor && !isTrapdoor) {
+        if (!isDoor && !isTrapdoor && !isGate) {
             return InteractionResult.PASS;
         }
 
-        boolean isWooden = state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS);
+        boolean isWooden = state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS) || state.is(BlockTags.FENCE_GATES);
         boolean isCopper = isCopper(state);
 
         if (isDoor) {
             if (isWooden && !Config.allowKnockingWoodenDoors) return InteractionResult.PASS;
+            if (isWooden && !isWoodenDoorTypeEnabled(state)) return InteractionResult.PASS;
             if (isCopper && !Config.allowKnockingCopperDoors) return InteractionResult.PASS;
             if (!isWooden && !isCopper && !Config.allowKnockingIronDoors) return InteractionResult.PASS;
-        } else { // isTrapdoor
+        } else if (isTrapdoor) {
             if (isWooden && !Config.allowKnockingWoodenTrapdoors) return InteractionResult.PASS;
             if (isCopper && !Config.allowKnockingCopperTrapdoors) return InteractionResult.PASS;
             if (!isWooden && !isCopper && !Config.allowKnockingIronTrapdoors) return InteractionResult.PASS;
+        } else {
+            if (!Config.allowKnockingFenceGates) return InteractionResult.PASS;
         }
 
         if (Config.knockingRequiresShift && !player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
 
-        if (Config.requirePermissionToKnock && !Permissions.check(player, "betterdoors.knock", false)) {
+        if (!isGate && Config.requirePermissionToKnock && !Permissions.check(player, "betterdoors.knock", false)) {
             return InteractionResult.PASS;
         }
 
-        SoundEvent knockSound = getSoundEvent(isWooden ? Config.soundKnockWood : (isCopper ? Config.soundKnockCopper : Config.soundKnockIron));
+        if (isGate && Config.requirePermissionToKnockFenceGates && !Permissions.check(player, "betterdoors.knockgates", false)) {
+            return InteractionResult.PASS;
+        }
+
+        String soundId = isGate ? Config.soundKnockWood : (isWooden ? Config.soundKnockWood : (isCopper ? Config.soundKnockCopper : Config.soundKnockIron));
+        SoundEvent knockSound = getSoundEvent(soundId);
         if (knockSound == null) {
             return InteractionResult.PASS;
         }
@@ -80,5 +90,24 @@ public class KnockingHandler implements AttackBlockCallback {
 
     private boolean isCopper(BlockState state) {
         return BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath().contains("copper_door") || BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath().contains("copper_trapdoor");
+    }
+
+    private boolean isWoodenDoorTypeEnabled(BlockState state) {
+        String path = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        return switch (path) {
+            case "oak_door" -> Config.allowKnockingOakDoors;
+            case "spruce_door" -> Config.allowKnockingSpruceDoors;
+            case "birch_door" -> Config.allowKnockingBirchDoors;
+            case "jungle_door" -> Config.allowKnockingJungleDoors;
+            case "acacia_door" -> Config.allowKnockingAcaciaDoors;
+            case "dark_oak_door" -> Config.allowKnockingDarkOakDoors;
+            case "mangrove_door" -> Config.allowKnockingMangroveDoors;
+            case "bamboo_door" -> Config.allowKnockingBambooDoors;
+            case "cherry_door" -> Config.allowKnockingCherryDoors;
+            case "crimson_door" -> Config.allowKnockingCrimsonDoors;
+            case "warped_door" -> Config.allowKnockingWarpedDoors;
+            case "pale_oak_door" -> Config.allowKnockingPaleOakDoors;
+            default -> true;
+        };
     }
 } 

@@ -16,11 +16,25 @@ public class Config {
     public static boolean knockingRequiresShift;
     public static boolean requirePermissionToKnock;
     public static boolean allowKnockingWoodenDoors;
+    public static boolean allowKnockingOakDoors;
+    public static boolean allowKnockingSpruceDoors;
+    public static boolean allowKnockingBirchDoors;
+    public static boolean allowKnockingJungleDoors;
+    public static boolean allowKnockingAcaciaDoors;
+    public static boolean allowKnockingDarkOakDoors;
+    public static boolean allowKnockingMangroveDoors;
+    public static boolean allowKnockingBambooDoors;
+    public static boolean allowKnockingCherryDoors;
+    public static boolean allowKnockingCrimsonDoors;
+    public static boolean allowKnockingWarpedDoors;
+    public static boolean allowKnockingPaleOakDoors;
     public static boolean allowKnockingIronDoors;
     public static boolean allowKnockingCopperDoors;
     public static boolean allowKnockingWoodenTrapdoors;
     public static boolean allowKnockingIronTrapdoors;
     public static boolean allowKnockingCopperTrapdoors;
+    public static boolean allowKnockingFenceGates;
+    public static boolean requirePermissionToKnockFenceGates;
 
     // Sound settings
     public static String soundKnockIron;
@@ -33,8 +47,10 @@ public class Config {
     public static boolean allowDoubleWoodenDoors;
     public static boolean allowDoubleIronDoors;
     public static boolean allowDoubleCopperDoors;
+    public static boolean allowDoubleFenceGates;
     public static boolean checkForRedstone;
     public static boolean requirePermissionForDoubleDoors;
+    public static boolean requirePermissionForDoubleFenceGates;
 
     public static void load() {
         try {
@@ -63,11 +79,25 @@ public class Config {
         knockingRequiresShift = toml.getBoolean("knocking-requires-shift", false);
         requirePermissionToKnock = toml.getBoolean("require-permission-to-knock", false);
         allowKnockingWoodenDoors = toml.getBoolean("allow-knocking-wooden-doors", true);
+        allowKnockingOakDoors = toml.getBoolean("allow-knocking-oak-doors", true);
+        allowKnockingSpruceDoors = toml.getBoolean("allow-knocking-spruce-doors", true);
+        allowKnockingBirchDoors = toml.getBoolean("allow-knocking-birch-doors", true);
+        allowKnockingJungleDoors = toml.getBoolean("allow-knocking-jungle-doors", true);
+        allowKnockingAcaciaDoors = toml.getBoolean("allow-knocking-acacia-doors", true);
+        allowKnockingDarkOakDoors = toml.getBoolean("allow-knocking-dark-oak-doors", true);
+        allowKnockingMangroveDoors = toml.getBoolean("allow-knocking-mangrove-doors", true);
+        allowKnockingBambooDoors = toml.getBoolean("allow-knocking-bamboo-doors", true);
+        allowKnockingCherryDoors = toml.getBoolean("allow-knocking-cherry-doors", true);
+        allowKnockingCrimsonDoors = toml.getBoolean("allow-knocking-crimson-doors", true);
+        allowKnockingWarpedDoors = toml.getBoolean("allow-knocking-warped-doors", true);
+        allowKnockingPaleOakDoors = toml.getBoolean("allow-knocking-pale-oak-doors", true);
         allowKnockingIronDoors = toml.getBoolean("allow-knocking-iron-doors", true);
         allowKnockingCopperDoors = toml.getBoolean("allow-knocking-copper-doors", true);
         allowKnockingWoodenTrapdoors = toml.getBoolean("allow-knocking-wooden-trapdoors", true);
         allowKnockingIronTrapdoors = toml.getBoolean("allow-knocking-iron-trapdoors", true);
         allowKnockingCopperTrapdoors = toml.getBoolean("allow-knocking-copper-trapdoors", true);
+        allowKnockingFenceGates = toml.getBoolean("allow-knocking-fence-gates", false);
+        requirePermissionToKnockFenceGates = toml.getBoolean("require-permission-to-knock-fence-gates", false);
 
         // Load sound settings
         soundKnockIron = toml.getString("sound-knock-iron", "minecraft:entity.zombie.attack_iron_door");
@@ -80,7 +110,9 @@ public class Config {
         allowDoubleWoodenDoors = toml.getBoolean("allow-double-wooden-doors", true);
         allowDoubleIronDoors = toml.getBoolean("allow-double-iron-doors", false);
         allowDoubleCopperDoors = toml.getBoolean("allow-double-copper-doors", true);
+        allowDoubleFenceGates = toml.getBoolean("allow-double-fence-gates", false);
         checkForRedstone = toml.getBoolean("check-for-redstone", true);
         requirePermissionForDoubleDoors = toml.getBoolean("require-permission-for-double-doors", false);
+        requirePermissionForDoubleFenceGates = toml.getBoolean("require-permission-for-double-fence-gates", false);
     }
 } 
