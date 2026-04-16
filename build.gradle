@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = mod_group_id
-    version = "${minecraft_version}-${mod_version}"
+    version = mod_version
 
     repositories {
         mavenCentral()
@@ -29,10 +29,6 @@ tasks.register('collectJars', Copy) {
     dependsOn tasks.named('buildAllLoaders')
     into layout.buildDirectory.dir('collected-jars')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    doFirst {
-        delete(layout.buildDirectory.dir('collected-jars').get().asFile)
-    }
 
     from(project(':fabric').layout.buildDirectory.dir('libs')) {
         include '*.jar'
