@@ -31,18 +31,15 @@ tasks.register('collectJars', Copy) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(project(':fabric').layout.buildDirectory.dir('libs')) {
-        include '*.jar'
-        exclude '*-sources.jar', '*-dev.jar'
+        include "${mod_id}-fabric-${mod_version}.jar"
         rename { "${mod_id}-${mod_version}-fabric.jar" }
     }
     from(project(':quilt').layout.buildDirectory.dir('libs')) {
-        include '*.jar'
-        exclude '*-sources.jar', '*-dev.jar'
+        include "${mod_id}-quilt-${mod_version}.jar"
         rename { "${mod_id}-${mod_version}-quilt.jar" }
     }
     from(project(':neoforge').layout.buildDirectory.dir('libs')) {
-        include '*.jar'
-        exclude '*-sources.jar'
+        include "${mod_id}-neoforge-${mod_version}.jar"
         rename { "${mod_id}-${mod_version}-neoforge.jar" }
     }
 }

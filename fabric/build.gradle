@@ -43,7 +43,9 @@ processResources {
             minecraft_compat_min: minecraft_compat_min,
             minecraft_compat_max: minecraft_compat_max,
             java_version        : java_version,
-            fabric_loader       : fabric_loader_version
+            fabric_loader       : fabric_loader_version,
+            fabric_api_version  : fabric_api_version,
+            perms_api_version   : fabric_permissions_api_version
     ]
 
     inputs.properties props
