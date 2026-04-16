@@ -4,6 +4,7 @@
     "group": "me.noramibu",
     "id": "${mod_id}",
     "version": "${version}",
+    "intermediate_mappings": "net.fabricmc:intermediary",
     "metadata": {
       "name": "${mod_name}",
       "description": "${mod_description}",
@@ -22,28 +23,23 @@
       },
       {
         "id": "minecraft",
-        "versions": ">=${minecraft_compat_min} <${minecraft_compat_max}"
+        "versions": "~${minecraft_compat_min}"
       },
       {
         "id": "java",
         "versions": ">=${java_version}"
       },
       {
-        "id": "fabric_api",
+        "id": "fabric-api",
         "versions": "*"
       },
       {
-        "id": "fabric_permissions_api_v0",
+        "id": "fabric-permissions-api-v0",
         "versions": "*"
       }
     ],
     "entrypoints": {
-      "init": [
-        {
-          "adapter": "fabric",
-          "value": "me.noramibu.BetterDoorsQuilt"
-        }
-      ]
+      "init": "me.noramibu.BetterDoorsQuilt"
     }
   },
   "mixin": [

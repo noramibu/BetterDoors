@@ -30,6 +30,20 @@ tasks.register('collectJars', Copy) {
     into layout.buildDirectory.dir('collected-jars')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
+    doFirst {
+        def outDir = layout.buildDirectory.dir('collected-jars').get().asFile
+        [
+                "${mod_id}-${mod_version}-fabric.jar",
+                "${mod_id}-${mod_version}-quilt.jar",
+                "${mod_id}-${mod_version}-neoforge.jar"
+        ].each { name ->
+            def target = new File(outDir, name)
+            if (target.exists() && !target.delete()) {
+                logger.lifecycle("collectJars: could not delete locked file ${target}")
+            }
+        }
+    }
+
     from(project(':fabric').layout.buildDirectory.dir('libs')) {
         include "${mod_id}-fabric-${mod_version}.jar"
         rename { "${mod_id}-${mod_version}-fabric.jar" }
