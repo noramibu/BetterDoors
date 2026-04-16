@@ -1,75 +1,56 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'base'
 }
 
-version = project.mod_version
-group = project.maven_group
+allprojects {
+    group = mod_group_id
+    version = "${minecraft_version}-${mod_version}"
 
-base {
-	archivesName = project.archives_base_name
+    repositories {
+        mavenCentral()
+        maven { url = 'https://maven.fabricmc.net' }
+        maven { url = 'https://maven.quiltmc.org/repository/release' }
+        maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
+    }
 }
 
-repositories {
-	maven { url "https://maven.fabricmc.net/" }
-	mavenCentral()
-	maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
 }
 
-loom {
+tasks.register('buildAllLoaders') {
+    dependsOn ':fabric:build', ':quilt:build', ':neoforge:build'
 }
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+tasks.register('collectJars', Copy) {
+    dependsOn tasks.named('buildAllLoaders')
+    into layout.buildDirectory.dir('collected-jars')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    doFirst {
+        delete(layout.buildDirectory.dir('collected-jars').get().asFile)
+    }
 
-	// TOML config
-	include(implementation("com.moandjiezana.toml:toml4j:0.7.2"))
-
-	// Permissions API
-	include(implementation("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"))
+    from(project(':fabric').layout.buildDirectory.dir('libs')) {
+        include '*.jar'
+        exclude '*-sources.jar', '*-dev.jar'
+        rename { "${mod_id}-${mod_version}-fabric.jar" }
+    }
+    from(project(':quilt').layout.buildDirectory.dir('libs')) {
+        include '*.jar'
+        exclude '*-sources.jar', '*-dev.jar'
+        rename { "${mod_id}-${mod_version}-quilt.jar" }
+    }
+    from(project(':neoforge').layout.buildDirectory.dir('libs')) {
+        include '*.jar'
+        exclude '*-sources.jar'
+        rename { "${mod_id}-${mod_version}-neoforge.jar" }
+    }
 }
 
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
-}
-
-java {
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
-}
-
-jar {
-	inputs.property "archivesName", project.base.archivesName
-
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	repositories {
-    	mavenCentral()
-	}
+tasks.named('build') {
+    dependsOn tasks.named('collectJars')
 }

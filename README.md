@@ -1,33 +1,33 @@
-## Overview
+## Better Doors
 
-A simple **server-side Fabric mod** that introduces **double door** functionality and a simple yet nice **door knocking** feature.
+Server-side mod that adds:
 
-Fully compatible with **Redstone** and **highly customizable** to tailor behavior to your server’s needs.
+- double doors
+- double fence gates
+- configurable door and gate knocking
+- optional permission checks
 
----
+## Loaders
 
-## Features
+- Fabric (`fabric` module)
+- Quilt (`quilt` module)
+- NeoForge (`neoforge` module)
 
-- 🚪 **Double Door Support** – Open both doors at once with a single click
-- 👊 **Knocking Mechanic** – Left-click any door to knock (sound + interaction)
-- 🔴 **Redstone Compatible** – Works seamlessly with redstone circuits
-- ⚙️ **Highly Configurable** – Customize which doors are affected, knock sounds, and more
-- 🌐 **Server-side Only** – No need for clients to install anything instead other mods!
-- 🔑 **Supports Permissions** – Decide who can knock or open double doors!
+## Target versions
 
----
+- Minecraft `26.1.x` (`[26.1, 26.2)` in loader metadata)
+- Java `25`
 
-## Requirements
+## Build
 
-- [Fabric API](https://modrinth.com/mod/fabric-api)
+Build and collect all loader jars in one folder:
 
----
+```bash
+./gradlew build
+```
 
-## Have an issue?
+Collected artifacts are written to:
 
-I created this mod mostly for my own needs, but if you have a problem or feature-request, just notice me on Discord (bimunora) and I will do my best for you! 
-
----
-
-🎥 **Showcase Video**:  
-https://www.youtube.com/v/C7BF_fYhVBw
+```text
+build/collected-jars
+```

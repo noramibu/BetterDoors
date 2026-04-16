@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "me.noramibu",
+    "id": "${mod_id}",
+    "version": "${version}",
+    "metadata": {
+      "name": "${mod_name}",
+      "description": "${mod_description}",
+      "license": "${mod_license}",
+      "contributors": {
+        "${mod_authors}": "Developer"
+      },
+      "contact": {
+        "sources": "${mod_repository}"
+      }
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=${quilt_loader}"
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=${minecraft_compat_min} <${minecraft_compat_max}"
+      },
+      {
+        "id": "java",
+        "versions": ">=${java_version}"
+      },
+      {
+        "id": "fabric_api",
+        "versions": "*"
+      },
+      {
+        "id": "fabric_permissions_api_v0",
+        "versions": "*"
+      }
+    ],
+    "entrypoints": {
+      "init": [
+        {
+          "adapter": "fabric",
+          "value": "me.noramibu.BetterDoorsQuilt"
+        }
+      ]
+    }
+  },
+  "mixin": [
+    "betterdoors.quilt.mixins.json"
+  ]
+}

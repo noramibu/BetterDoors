@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "license": "${mod_license}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "contact": {
+    "sources": "${mod_repository}"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.noramibu.BetterDoorsFabric"
+    ]
+  },
+  "mixins": [
+    "betterdoors.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader}",
+    "minecraft": ">=${minecraft_compat_min} <${minecraft_compat_max}",
+    "java": ">=${java_version}",
+    "fabric-api": "*",
+    "fabric-permissions-api-v0": "*"
+  }
+}

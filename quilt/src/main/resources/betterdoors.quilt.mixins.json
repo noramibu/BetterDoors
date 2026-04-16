@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.noramibu.mixin",
+  "mixins": [
+    "DoorBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
